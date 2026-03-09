@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JAIPUR</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style1.css">
+</head>
+
+<body>
+    <script src="script.js"></script>
+    <header>
+        <div class="box">
+            <div class="box1">
+                <h1>
+                    <img src="travel.png" class="logo-icon">
+                    Bharat Yatra
+                </h1>
+            </div>
+            <div class="box2">
+                <nav class="items">
+
+                    <a href="HOME.HTML" class="a1">Home</a>
+                    <a href="ExploreDestination.html" class="a1">Explore Destinations</a>
+                    <a href="Plan-a-Trip.html" class="a1">Plan a Trip</a>
+                    <a href="GuideBooking.html" class="a1">Guide Booking</a>
+                    <a href="LocalSupport.html" class="a1">Local Support</a>
+                   
+                    <a href="Sign-in.html" class="button1">Sign in /up</a>
+
+                </nav>
+            </div>
+        </div>
+    </header>
+    <section class="plan">
+        <h1 class="heading10">Select cities</h1>
+        <div class="selectstate">
+
+            <div class="selectcity" data-city="jaipur" onclick="selectCity('jaipur', this)">
+                <img src="./Rajasthan-cities/jaipur.jpeg" alt="Jaipur">
+                <p class="citybutton">Jaipur</p>
+            </div>
+
+            <div class="selectcity" data-city="jodhpur" onclick="selectCity('jodhpur', this)">
+                <img src="./Rajasthan-cities/jodhpur.jpeg" alt="Jodhpur">
+                <p class="citybutton">Jodhpur</p>
+            </div>
+
+            <div class="selectcity" data-city="bikaner" onclick="selectCity('bikaner', this)">
+                <img src="./Rajasthan-cities/bikaner.jpg" alt="Bikaner">
+                <p class="citybutton">Bikaner</p>
+            </div>
+
+            <div class="selectcity" data-city="bundi" onclick="selectCity('bundi', this)">
+                <img src="./Rajasthan-cities/city-bundi.jpg" alt="bundi">
+                <p class="citybutton">Bundi</p>
+            </div>
+
+            <div class="selectcity" data-city="pushkar" onclick="selectCity('pushkar', this)">
+                <img src="./Rajasthan-cities/pushkar.jpg" alt="pushkar">
+                <p class="citybutton">pushkar</p>
+            </div>
+
+            <div class="selectcity" data-city="udaipur" onclick="selectCity('udaipur', this)">
+                <img src="./Rajasthan-cities/udaipur.jpg" alt="Udaipur">
+                <p class="citybutton">Udaipur</p>
+            </div>
+
+            <div class="selectcity" data-city="chittorgarh" onclick="selectCity('chittorgarh', this)">
+                <img src="./Rajasthan-cities/667x270_rajasthan-tour-itinerary-10-days.jpg" alt="Chittorgarh">
+                <p class="citybutton">Chittorgarh</p>
+            </div>
+            <div class="selectcity" data-city="jaisalmer" onclick="selectCity('jaisalmer', this)">
+                <img src="./Rajasthan-cities/jaislmar.jpg" alt="jaisalmer">
+                <p class="citybutton">jaisalmer</p>
+            </div>
+        </div>
+        <button class="next" onclick="goToSummaryPage()">Next</button>
+    </section>
+</body>
+
+</html>
