@@ -1,164 +1,97 @@
 // ==============================
-// CHECK IF JS IS CONNECTED
+// SCRIPT LOADED
 // ==============================
-console.log("Script Loaded Successfully");
+
+console.log("Frontend Script Loaded Successfully");
 
 
-// ================= AUTH SYSTEM =================
-// Backend API URL
-const API_BASE_URL = "http://localhost:8080/api";
+// ==============================
+// SIGNUP FUNCTION
+// ==============================
 
-document.addEventListener("DOMContentLoaded", function () {
+function signup() {
 
-    // ===== SIGN UP =====
-    const signupForm = document.getElementById("signupForm");
+    const name = document.getElementById("signupName").value;
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
 
-    if (signupForm) {
-        signupForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const name = document.getElementById("signupName").value;
-            const email = document.getElementById("signupEmail").value;
-            const password = document.getElementById("signupPassword").value;
-
-            // Validate inputs
-            if (!name || !email || !password) {
-                alert("Please fill in all fields.");
-                return;
-            }
-
-            if (password.length < 6) {
-                alert("Password must be at least 6 characters.");
-                return;
-            }
-
-            // Send signup request to backend
-            const signupData = {
-                name: name,
-                email: email,
-                password: password
-            };
-
-            fetch(`${API_BASE_URL}/auth/signup`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(signupData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert(data.message);
-                    // Clear form
-                    signupForm.reset();
-                    // Redirect to login page
-                    window.location.href = "Login.html";
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred during sign up. Please try again.");
-            });
-        });
+    if (name === "" || email === "" || password === "") {
+        alert("Please fill all fields");
+        return;
     }
 
-
-    // ===== LOGIN =====
-    const loginForm = document.getElementById("loginForm");
-
-    if (loginForm) {
-        loginForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-
-            const email = document.getElementById("loginEmail").value;
-            const password = document.getElementById("loginPassword").value;
-
-            // Validate inputs
-            if (!email || !password) {
-                alert("Please fill in all fields.");
-                return;
-            }
-
-            // Send login request to backend
-            const loginData = {
-                email: email,
-                password: password
-            };
-
-            fetch(`${API_BASE_URL}/auth/login`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(loginData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Store user and token in sessionStorage
-                    sessionStorage.setItem("loggedInUser", JSON.stringify(data.user));
-                    sessionStorage.setItem("token", data.token);
-                    
-                    alert(data.message);
-                    // Clear form
-                    loginForm.reset();
-                    // Redirect to home page
-                    window.location.href = "HOME.HTML";
-                } else {
-                    alert(data.message);
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("An error occurred during login. Please check if backend is running on port 8080.");
-            });
-        });
+    if (password.length < 6) {
+        alert("Password must be at least 6 characters");
+        return;
     }
 
-});
+    const user = {
+        name: name,
+        email: email,
+        password: password
+    };
 
-// ===== LOGOUT =====
-function logout() {
-    sessionStorage.removeItem("loggedInUser");
-    sessionStorage.removeItem("token");
-    alert("You have been logged out.");
+    localStorage.setItem("user", JSON.stringify(user));
+
+    alert("Signup successful!");
+
     window.location.href = "Login.html";
 }
 
-// ===== CHECK IF USER IS LOGGED IN =====
-function isUserLoggedIn() {
-    return sessionStorage.getItem("loggedInUser") !== null &&
-           sessionStorage.getItem("token") !== null;
-}
 
-// ===== GET LOGGED IN USER =====
-function getLoggedInUser() {
-    const userJson = sessionStorage.getItem("loggedInUser");
-    return userJson ? JSON.parse(userJson) : null;
-}
-
-// ===== GET AUTH TOKEN =====
-function getAuthToken() {
-    return sessionStorage.getItem("token");
-}
-
-
-
+// ==============================
+// LOGIN FUNCTION
+// ==============================
 
 document.addEventListener("DOMContentLoaded", function () {
-    if (window.location.pathname.includes("city.html")) {
-        localStorage.removeItem("selectedCities");
-    }
+
+    const loginForm = document.getElementById("loginForm");
+
+    if (!loginForm) return;
+
+    loginForm.addEventListener("submit", function (e) {
+
+        e.preventDefault();
+
+        const email = document.getElementById("loginEmail").value;
+        const password = document.getElementById("loginPassword").value;
+
+        const savedUser = JSON.parse(localStorage.getItem("user"));
+
+        if (!savedUser) {
+            alert("No account found. Please sign up first");
+            return;
+        }
+
+        if (email === savedUser.email && password === savedUser.password) {
+
+            alert("Login Successful!");
+
+            localStorage.setItem("loggedIn", "true");
+
+            window.location.href = "HOME.HTML";
+
+        } else {
+
+            alert("Invalid Email or Password");
+
+        }
+
+    });
+
 });
+
+
 // ==============================
 // STATE SELECTION
 // ==============================
+
 function selectState(stateName) {
+
     localStorage.setItem("selectedState", stateName);
+
     localStorage.removeItem("selectedCities");
+
     window.location.href = "city.html";
 }
 
@@ -166,6 +99,7 @@ function selectState(stateName) {
 // ==============================
 // MULTI CITY SELECTION
 // ==============================
+
 function selectCity(cityName, element) {
 
     element.classList.toggle("selected-city");
@@ -173,18 +107,43 @@ function selectCity(cityName, element) {
     let selectedCities = JSON.parse(localStorage.getItem("selectedCities")) || [];
 
     if (selectedCities.includes(cityName)) {
+
         selectedCities = selectedCities.filter(city => city !== cityName);
+
     } else {
+
         selectedCities.push(cityName);
+
     }
 
     localStorage.setItem("selectedCities", JSON.stringify(selectedCities));
 
-    console.log("Selected:", selectedCities);
 }
 
+
 // ==============================
-// EXPLORE DESTINATION PAGE
+// NEXT BUTTON (CITY PAGE)
+// ==============================
+
+function goToSummaryPage() {
+
+    let selectedCities = JSON.parse(localStorage.getItem("selectedCities")) || [];
+
+    if (selectedCities.length === 0) {
+
+        alert("Please select at least one city");
+
+        return;
+
+    }
+
+    window.location.href = "summary.html";
+
+}
+
+
+// ==============================
+// EXPLORE DESTINATIONS PAGE
 // ==============================
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -192,7 +151,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (!window.location.pathname.includes("ExploreDestination.html")) return;
 
     const destinations = [
-        { name: "Pillared Cenotaph", img: "./Rajasthan-cities/84_Pillared_Cenotaph_1.jpeg" },
+
+         { name: "Pillared Cenotaph", img: "./Rajasthan-cities/84_Pillared_Cenotaph_1.jpeg" },
         { name: "Akshardham Temple", img: "./Rajasthan-cities/aksardham-temple.jpg" },
         { name: "Albert Hall Museum", img: "./Rajasthan-cities/Albert-Museum.jpg" },
         { name: "Amar Jawan Jyoti", img: "./Rajasthan-cities/Amar-Jawan-jyoti.jpg" },
@@ -266,56 +226,59 @@ document.addEventListener("DOMContentLoaded", function () {
         { name: "Samode Palace", img: "./Rajasthan-cities/samode.png" },
         { name: "Savitri Mata Temple", img: "./Rajasthan-cities/Savitri_Mata_Temple_1.jpeg" },
         { name: "Sisodia Rani Palace", img: "./Rajasthan-cities/sisodia-rani-palace.jpg" }
+
     ];
 
     const container = document.getElementById("destinationContainer");
+
     const searchInput = document.getElementById("searchInput");
 
-    if (!container) return;
-
-    // DISPLAY FUNCTION
     function displayDestinations(data) {
+
         container.innerHTML = "";
 
         data.forEach(place => {
 
             const card = document.createElement("div");
+
             card.classList.add("card");
 
             card.innerHTML = `
-                <img src="${place.img}" alt="${place.name}">
+                <img src="${place.img}">
                 <div class="card-content">
-                    
                     <h3>${place.name}</h3>
-                   <button class="btn" onclick="goToView('${place.name}', '${place.img}')">
-                       View
-                         </button>
+                    <button class="btn" onclick="goToView('${place.name}','${place.img}')">
+                    View
+                    </button>
                 </div>
             `;
 
             container.appendChild(card);
+
         });
+
     }
 
-    // RANDOM ORDER ON LOAD
-    displayDestinations(destinations.sort(() => 0.5 - Math.random()));
+    displayDestinations(destinations);
 
-    // SEARCH FUNCTION
-    if (searchInput) {
-        searchInput.addEventListener("keyup", function () {
+    searchInput.addEventListener("keyup", function () {
 
-            const value = this.value.toLowerCase();
+        const value = this.value.toLowerCase();
 
-            const filtered = destinations.filter(place =>
-                place.name.toLowerCase().includes(value)
-            );
+        const filtered = destinations.filter(place =>
+            place.name.toLowerCase().includes(value)
+        );
 
-            displayDestinations(filtered);
-        });
-    }
+        displayDestinations(filtered);
+
+    });
 
 });
 
+
+// ==============================
+// GUIDE BOOKING PAGE
+// ==============================
 
 const guides = [
     {
@@ -391,23 +354,21 @@ if (guideContainer && guideSearchInput) {
     displayGuides(guides);
 }
 
+
+// ==============================
+// LOCAL SUPPORT PAGE
+// ==============================
+
 document.addEventListener("DOMContentLoaded", function () {
 
     // Sirf LocalSupport.html page pe chale
     if (!window.location.pathname.includes("LocalSupport.html")) return;
 
     const supports = [
-        // { name: "Mewar Haveli", img: "./Rajasthan-cities/mewar-Haveli-gangur-ghar.jpg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "Dreamyard Hotel", img: "./Rajasthan-cities/dreamyard-hotel.jpeg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "Hadoti Palace Bundi", img: "./Rajasthan-cities/Hadoti-Palace-Bundi.jpeg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "Zostel Bundi", img: "./Rajasthan-cities/Zostel-Bundi.jpeg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "Dev Niwas Hotel", img: "./Rajasthan-cities/Dev-Niwas-Hotel.jpeg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
+       
         { name: "Royal  Art Emporium", img: "./Rajasthan-cities/ROyal-Art-Emporium.jpeg", desc: " Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
         { name: "Raju's Fashion Mall", img: "./Rajasthan-cities/clothes.jpeg", desc: "Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "Zostel Jodhpur", img: "./Rajasthan-cities/zostel-jodhpur.jpeg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "Kalinga Hotel", img: "./Rajasthan-cities/Kalinga-Hotel.jpg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "pushkar mantra resort", img: "./Rajasthan-cities/pushkar-mantra-resort.jpeg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
-        // { name: "The Sunrise Resort", img: "./Rajasthan-cities/the-Sunrise-Resort.jpg",desc:"Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
+     
         { name: "Pushkar Main Market", img: "./Rajasthan-cities/Pushkar-Main-Market.jpg", desc: "Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
         { name: "Ram ji ki Dukaan", img: "./Rajasthan-cities/Ram-ji-ki-Dukaan.jpeg", desc: "Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" },
         { name: "Gulab Halwa Wala", img: "./Rajasthan-cities/Gulab-Halwa-Wala.jpeg", desc: "Location: 34-35 Lal Ghat Road Old City, Behind Jagdish Temple, Udaipur 313001 India" }
@@ -471,24 +432,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-// ==============================
-// NEXT BUTTON
-// ==============================
-function goToSummaryPage() {
-
-    let selectedCities = JSON.parse(localStorage.getItem("selectedCities")) || [];
-
-    if (selectedCities.length === 0) {
-        alert("Please select at least one city");
-        return;
-    }
-
-    window.location.href = "summary.html";
-}
 
 // ==============================
-// SUMMARY PAGE (UPDATED WORKING)
+// SUMMARY PAGE
 // ==============================
+
 document.addEventListener("DOMContentLoaded", function () {
 
     if (!window.location.pathname.includes("summary.html")) return;
@@ -648,8 +596,6 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-/* ================= HOTELS PAGE SCRIPT ================= */
-
 document.addEventListener("DOMContentLoaded", function () {
 
     const hotelList = document.getElementById("hotel-list");
@@ -723,15 +669,21 @@ function goToHotels() {
 }
 
 
-
 function goToView(name, img){
-    const viewData = { name: name, img: img };
+
+    const viewData = {
+        name: name,
+        img: img
+    };
+
     localStorage.setItem("viewDestination", JSON.stringify(viewData));
+
     window.location.href = "View.html";
 }
-/* =========================
-   VIEW PAGE SCRIPT (FINAL WORKING)
-========================= */
+
+// ==============================
+// VIEW DESTINATION PAGE
+// ==============================
 
 document.addEventListener("DOMContentLoaded", function(){
 
